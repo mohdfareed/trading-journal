@@ -24,7 +24,7 @@ EXECUTABLE = "trading-journal"
 
 
 def main(path: Path) -> None:
-    """Deploy a new machine."""
+    """Install application."""
 
     _validate(path)
     _create_env(path)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     # Parse arguments
     args = parser.parse_args()
     app_path: Path = args.PATH
-    try:  # deploy machine
+    try:  # Install the application
         main(app_path)
 
     # Handle user interrupts

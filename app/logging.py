@@ -19,7 +19,6 @@ app_console = Console()
 """The application console."""
 err_console = Console(stderr=True)
 """The application error console."""
-
 log_file_path = Path(__file__).parent.parent / "app.log"
 """Log file path."""
 
@@ -38,24 +37,18 @@ def setup_logging(debug_mode: bool) -> None:
     """Set up and initialize app logging."""
 
     # debug logger
-    debug = RichHandler(
-        console=app_console, markup=True, show_path=False, show_time=False
-    )
+    debug = RichHandler(console=app_console, markup=True, show_time=False)
     debug.setFormatter(logging.Formatter(r"[black]%(message)s[/]"))
     debug.setLevel(logging.DEBUG)
     debug.addFilter(lambda msg: msg.levelno < logging.INFO if debug_mode else False)
 
     # stdout logger
-    stdout = RichHandler(
-        console=app_console, markup=True, show_path=False, show_time=False
-    )
+    stdout = RichHandler(console=app_console, markup=True, show_time=False)
     stdout.setLevel(logging.INFO)
     stdout.addFilter(lambda msg: msg.levelno < logging.ERROR)
 
     # stderr logger
-    stderr = RichHandler(
-        console=err_console, markup=True, show_path=False, show_time=False
-    )
+    stderr = RichHandler(console=err_console, markup=True, show_time=False)
     stderr.setLevel(logging.ERROR)
 
     # setup file logger

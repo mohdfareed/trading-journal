@@ -10,8 +10,6 @@ import typer.completion
 
 from app import APP_NAME, __version__, logging
 
-COMPLETION_APP = "completion"
-
 app = typer.Typer(
     name=APP_NAME,
     context_settings={"help_option_names": ["-h", "--help"]},
@@ -25,7 +23,7 @@ def main(
         typer.Option("--debug", "-d", help="Log debug messages to the console."),
     ] = False,
 ) -> None:
-    """Machine setup CLI."""
+    """Trading Journal CLI."""
 
     # initialize logging
     logging.setup_logging(debug_mode)

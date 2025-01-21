@@ -21,7 +21,7 @@ from pathlib import Path
 
 
 def main() -> None:
-    """Set up the local development environment."""
+    """Set up environment."""
 
     print("Setting up development environment...")
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    try:  # Run script
+    try:  # Set up environment
         main()
 
     # Handle user interrupts
