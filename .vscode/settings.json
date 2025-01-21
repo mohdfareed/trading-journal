@@ -1,0 +1,15 @@
+{
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "debugpy.debugJustMyCode": false,
+    "cSpell.ignorePaths": [
+        ".vscode",
+        ".git",
+        ".venv",
+        ".gitignore",
+        ".github",
+    ],
+}

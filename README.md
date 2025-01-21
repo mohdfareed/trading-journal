@@ -1,0 +1,1 @@
+# Trading Journal Automation Application

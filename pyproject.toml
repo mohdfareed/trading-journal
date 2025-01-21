@@ -1,0 +1,40 @@
+[project]
+name = "trading-journal"
+version = "0.0.1"
+description = "Trading journal automation app."
+authors = [
+    {name = "Mohammed Fareed", email = "mohdf.fareed@icloud.com"}
+]
+readme = "README.md"
+repository = "https://github.com/mohdfareed/trading-journal"
+
+requires-python = ">=3.13,<4.0" # default macos version
+dynamic = [ "dependencies" ]
+
+[tool.poetry]
+packages = [
+    { include = "app", from = "." },
+]
+
+[project.scripts]
+trading-journal = "app.main:app"
+
+[tool.poetry.dependencies]
+poetry = "^2.0.1"
+typer = "^0.15.1"
+pydantic = "^2.10.5"
+pydantic-settings = "^2.7.1"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.0.1"
+pylint = "^3.3.3"
+mypy = "^1.14.1"
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+strict = true

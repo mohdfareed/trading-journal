@@ -1,0 +1,18 @@
+# Python environment
+.python-version
+*.poetry/
+*.venv/
+
+# Coverage
+.coverage
+
+# Logs
+*.log*
+
+# Build
+dist/
+
+# Caches
+*.mypy_cache/
+*.pytest_cache/
+*__pycache__*
