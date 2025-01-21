@@ -2,6 +2,7 @@
 .python-version
 *.poetry/
 *.venv/
+*.env
 
 # Coverage
 .coverage

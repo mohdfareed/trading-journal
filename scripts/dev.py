@@ -28,6 +28,7 @@ def main() -> None:
     poetry = _validate()
     _setup_environment(poetry)
     _setup_pre_commit_hooks(poetry)
+    _create_env_file()
 
     print("Environment setup complete.")
 
@@ -58,6 +59,15 @@ def _setup_pre_commit_hooks(poetry: Path) -> None:
         [poetry, "run", "pre-commit", "install", "--install-hooks"],
         check=True,
     )
+
+
+def _create_env_file() -> None:
+    env_file = Path(".env")
+    if env_file.exists():
+        return
+
+    print("Creating environment file...")
+    env_file.touch()
 
 
 # region: CLI
