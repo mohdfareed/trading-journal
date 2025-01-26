@@ -13,6 +13,18 @@ files = [
 ]
 
 [[package]]
+name = "blinker"
+version = "1.9.0"
+description = "Fast, simple object-to-object and broadcast signaling"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "blinker-1.9.0-py3-none-any.whl", hash = "sha256:ba0efaa9080b619ff2f3459d1d500c57bddea4a6b424b60a91141db6fd2f08bc"},
+    {file = "blinker-1.9.0.tar.gz", hash = "sha256:b4ce2265a7abece45e7cc896e98dbebe6cead56bcf805a3d23136d145f5445bf"},
+]
+
+[[package]]
 name = "build"
 version = "1.2.2.post1"
 description = "A simple, correct Python build frontend"
@@ -1880,4 +1892,4 @@ dev = ["pre-commit", "pytest", "pytest-cov"]
 [metadata]
 lock-version = "2.1"
 python-versions = "<4.0,>=3.13"
-content-hash = "c2fc7e2dade6c86d8f7cf6cd2052046fd97969641dc204ae97cd46a212954b8c"
+content-hash = "0021d4192a8f8ae738b3a82b5701ad6fc767b8cf84bcc89d5f1af9f03bbcd9a8"

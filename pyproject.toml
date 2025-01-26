@@ -15,6 +15,7 @@ dependencies = [
     "pydantic",
     "pydantic-settings",
     "dependency-injector",
+    "blinker",
     "typer",
     "v20"
 ]

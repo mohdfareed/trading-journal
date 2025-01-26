@@ -1,8 +1,9 @@
 """The trading journal application package."""
 
-__all__ = ["APP_NAME", "__version__"]
-
-from importlib.metadata import version
+from importlib.metadata import version as _version
 
 APP_NAME = "trading-journal"
-__version__ = version(APP_NAME)
+"""Application name."""
+
+__version__ = _version(APP_NAME)
+"""Application version."""
