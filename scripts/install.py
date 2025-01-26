@@ -23,12 +23,12 @@ DEFAULT_INSTALL_PATH = Path.cwd() / "Trading Journal"
 EXECUTABLE = "trading-journal"
 
 
-def main(path: Path) -> None:
+def main(path: Path, dev: bool) -> None:
     """Install application."""
 
     _validate(path)
     _create_env(path)
-    _install_app(path)
+    _install_app(path, dev)
     _link_executable(path)
 
 
@@ -48,7 +48,7 @@ def _create_env(path: Path) -> None:
     )
 
 
-def _install_app(path: Path) -> None:
+def _install_app(path: Path, dev: bool) -> None:
     print("Installing application...")
 
     if sys.platform == "win32":
@@ -57,7 +57,7 @@ def _install_app(path: Path) -> None:
         pip = path / "bin" / "pip"
 
     subprocess.run(
-        [pip, "install", PACKAGE_URL],
+        [pip, "install", PACKAGE_URL + "[dev]" if dev else ""],
         check=True,
     )
 
@@ -97,12 +97,16 @@ if __name__ == "__main__":
         nargs="?",
         default=DEFAULT_INSTALL_PATH,
     )
+    parser.add_argument(
+        "--dev",
+        action="store_true",
+        help="install in development mode",
+    )
 
     # Parse arguments
     args = parser.parse_args()
-    app_path: Path = args.PATH
     try:  # Install the application
-        main(app_path)
+        main(args.PATH, args.dev)
 
     # Handle user interrupts
     except KeyboardInterrupt:

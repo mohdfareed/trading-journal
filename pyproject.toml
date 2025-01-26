@@ -2,39 +2,49 @@
 name = "trading-journal"
 version = "0.0.1"
 description = "Trading journal automation app."
+license = { text = "Proprietary" }
+readme = "README.md"
+requires-python = "<4.0,>=3.13"
+
 authors = [
     {name = "Mohammed Fareed", email = "mohdf.fareed@icloud.com"}
 ]
-readme = "README.md"
+
+dependencies = [
+    "poetry",
+    "pydantic",
+    "pydantic-settings",
+    "dependency-injector",
+    "typer",
+    "v20"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pre-commit"
+]
+
+[project.scripts]
+trading-journal = "app.main:app"
+
+[project.urls]
 repository = "https://github.com/mohdfareed/trading-journal"
 
-requires-python = ">=3.13,<4.0" # default macos version
-dynamic = [ "dependencies" ]
+# MARK: Poetry
 
 [tool.poetry]
 packages = [
     { include = "app", from = "." },
 ]
 
-[project.scripts]
-trading-journal = "app.main:app"
-
-[tool.poetry.dependencies]
-poetry = "^2.0.1"
-typer = "^0.15.1"
-pydantic = "^2.10.5"
-pydantic-settings = "^2.7.1"
-
-[tool.poetry.group.dev.dependencies]
-pre-commit = "^4.0.1"
-pylint = "^3.3.3"
-mypy = "^1.14.1"
-pytest = "^8.3.4"
-pytest-cov = "^6.0.0"
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+# MARK: Tools
+
 [tool.mypy]
 strict = true
+enable_incomplete_feature = ["NewGenericSyntax"]

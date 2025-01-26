@@ -7,8 +7,8 @@
 # Coverage
 .coverage
 
-# Logs
-*.log*
+# App files
+data/
 
 # Build
 dist/

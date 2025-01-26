@@ -19,6 +19,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+PYTHON_VERSION = (3, 13)
+ENV_FILE_CONTENT = "APP_ENV=development"
+
 
 def main() -> None:
     """Set up environment."""
@@ -37,6 +40,21 @@ def _validate() -> Path:
     cwd = os.getcwd()
     atexit.register(lambda: os.chdir(cwd))
     os.chdir(Path(__file__).parent.parent)  # .py -> scripts -> repository
+
+    _validate_python()
+    return _validate_poetry()
+
+
+def _validate_python() -> None:
+    if sys.version_info >= PYTHON_VERSION:
+        return
+
+    version = ".".join(map(str, PYTHON_VERSION))
+    print(f"Error: Python >={version} is required.", file=sys.stderr)
+    sys.exit(1)
+
+
+def _validate_poetry() -> Path:
     if poetry := shutil.which("poetry"):
         return Path(poetry)
 
@@ -45,16 +63,19 @@ def _validate() -> Path:
 
 
 def _setup_environment(poetry: Path) -> None:
-    print("Installing dependencies...")
     subprocess.run(
-        [poetry, "install", "--with", "dev"],
+        [poetry, "env", "use", sys.executable],
+        env={"POETRY_VIRTUALENVS_IN_PROJECT": "true"},
+        check=True,
+    )
+    subprocess.run(
+        [poetry, "install", "-E", "dev"],
         env={"POETRY_VIRTUALENVS_IN_PROJECT": "true"},
         check=True,
     )
 
 
 def _setup_pre_commit_hooks(poetry: Path) -> None:
-    print("Setting up pre-commit hooks...")
     subprocess.run(
         [poetry, "run", "pre-commit", "install", "--install-hooks"],
         check=True,
@@ -68,6 +89,7 @@ def _create_env_file() -> None:
 
     print("Creating environment file...")
     env_file.touch()
+    env_file.write_text(ENV_FILE_CONTENT)
 
 
 # region: CLI
