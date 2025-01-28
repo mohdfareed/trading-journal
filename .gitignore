@@ -1,8 +1,7 @@
 # Python environment
-.python-version
-*.poetry/
 *.venv/
 *.env
+.python-version
 
 # Coverage
 .coverage
@@ -14,6 +13,5 @@ data/
 dist/
 
 # Caches
-*.mypy_cache/
 *.pytest_cache/
 *__pycache__*

@@ -12,10 +12,10 @@ Requirements:
 """
 
 import argparse
-import atexit
 import os
 import subprocess
 import sys
+import venv
 from pathlib import Path
 
 PACKAGE_URL = "git+https://github.com/mohdfareed/trading-journal.git"
@@ -25,53 +25,35 @@ EXECUTABLE = "trading-journal"
 
 def main(path: Path, dev: bool) -> None:
     """Install application."""
+    print(f"Installing application at: {path}")
 
-    _validate(path)
-    _create_env(path)
-    _install_app(path, dev)
-    _link_executable(path)
-
-
-def _validate(path: Path) -> None:
-    cwd = os.getcwd()
-    atexit.register(lambda: os.chdir(cwd))
-    path.parent.mkdir(parents=True, exist_ok=True)
-    os.chdir(path.parent)
-
-
-def _create_env(path: Path) -> None:
-    print(f"Creating virtual environment at: {path}")
-    subprocess.run(
-        ["python3", "-m", "venv", path],
-        cwd=path.parent,
-        check=True,
+    print("Creating environment...")
+    path.mkdir(parents=True, exist_ok=True)
+    builder = venv.EnvBuilder(
+        upgrade=True, with_pip=True, prompt=EXECUTABLE, upgrade_deps=True
     )
+    builder.create(path)
 
-
-def _install_app(path: Path, dev: bool) -> None:
-    print("Installing application...")
-
-    if sys.platform == "win32":
-        pip = path / "Scripts" / "pip.exe"
-    else:  # Unix
-        pip = path / "bin" / "pip"
-
-    subprocess.run(
-        [pip, "install", PACKAGE_URL + "[dev]" if dev else ""],
-        check=True,
-    )
-
-
-def _link_executable(path: Path) -> None:
-    print("Linking executable...")
-
+    # activate venv and upgrade pip
     if sys.platform == "win32":
         executable = path / "Scripts" / f"{EXECUTABLE}.exe"
+        venv_exe = path / "Scripts" / "activate.ps1"
+        run(f"{venv_exe}; pip install --upgrade pip")
     else:  # Unix
         executable = path / "bin" / EXECUTABLE
+        venv_path = path / "bin" / "activate"
+        run(f"source {venv_path} && pip install --upgrade pip")
 
+    print("Installing application...")
+    run(f"pip install {PACKAGE_URL}" + "[dev]" if dev else "")
     link = path / EXECUTABLE
     link.symlink_to(executable)
+    print(f"Linked executable: {link} -> {executable}")
+
+
+def run(cmd: str | list[str]) -> None:
+    cmd = cmd if isinstance(cmd, str) else " ".join(cmd)
+    subprocess.run(cmd, shell=True, env=os.environ, check=True)
 
 
 # region: CLI

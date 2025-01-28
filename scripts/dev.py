@@ -12,84 +12,40 @@ Requirements:
 """
 
 import argparse
-import atexit
 import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-PYTHON_VERSION = (3, 13)
-ENV_FILE_CONTENT = "APP_ENV=development"
+ENV = os.environ.copy()
+ENV["POETRY_VIRTUALENVS_IN_PROJECT"] = "true"
+VENV_NAME = ".venv"
 
 
 def main() -> None:
     """Set up environment."""
 
     print("Setting up development environment...")
+    os.chdir(Path(__file__).parent.parent)  # .py -> scripts -> repository
+    if not shutil.which("poetry"):  # validate poetry
+        print("Error: Poetry is required to set up environment.", file=sys.stderr)
+        sys.exit(1)
 
-    poetry = _validate()
-    _setup_environment(poetry)
-    _setup_pre_commit_hooks(poetry)
-    _create_env_file()
+    if Path(VENV_NAME).exists():
+        shutil.rmtree(VENV_NAME)
 
+    print("Installing dependencies...")
+    run("poetry env use python3")
+    run("poetry lock")
+    run("poetry install -E dev")
+    run("poetry run pre-commit install --install-hooks")
     print("Environment setup complete.")
 
 
-def _validate() -> Path:
-    cwd = os.getcwd()
-    atexit.register(lambda: os.chdir(cwd))
-    os.chdir(Path(__file__).parent.parent)  # .py -> scripts -> repository
-
-    _validate_python()
-    return _validate_poetry()
-
-
-def _validate_python() -> None:
-    if sys.version_info >= PYTHON_VERSION:
-        return
-
-    version = ".".join(map(str, PYTHON_VERSION))
-    print(f"Error: Python >={version} is required.", file=sys.stderr)
-    sys.exit(1)
-
-
-def _validate_poetry() -> Path:
-    if poetry := shutil.which("poetry"):
-        return Path(poetry)
-
-    print("Error: Poetry is required to set up environment.", file=sys.stderr)
-    sys.exit(1)
-
-
-def _setup_environment(poetry: Path) -> None:
-    subprocess.run(
-        [poetry, "env", "use", sys.executable],
-        env={"POETRY_VIRTUALENVS_IN_PROJECT": "true"},
-        check=True,
-    )
-    subprocess.run(
-        [poetry, "install", "-E", "dev"],
-        env={"POETRY_VIRTUALENVS_IN_PROJECT": "true"},
-        check=True,
-    )
-
-
-def _setup_pre_commit_hooks(poetry: Path) -> None:
-    subprocess.run(
-        [poetry, "run", "pre-commit", "install", "--install-hooks"],
-        check=True,
-    )
-
-
-def _create_env_file() -> None:
-    env_file = Path(".env")
-    if env_file.exists():
-        return
-
-    print("Creating environment file...")
-    env_file.touch()
-    env_file.write_text(ENV_FILE_CONTENT)
+def run(cmd: str | list[str]) -> None:
+    cmd = cmd if isinstance(cmd, str) else " ".join(cmd)
+    subprocess.run(cmd, shell=True, env=ENV, check=True)
 
 
 # region: CLI

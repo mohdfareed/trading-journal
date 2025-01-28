@@ -4,12 +4,14 @@ version = "0.0.1"
 description = "Trading journal automation app."
 license = { text = "Proprietary" }
 readme = "README.md"
-requires-python = "<4.0,>=3.13"
-
 authors = [
     {name = "Mohammed Fareed", email = "mohdf.fareed@icloud.com"}
 ]
+urls = { repository = "https://github.com/mohdfareed/trading-journal" }
 
+# MARK: Dependencies
+
+requires-python = ">=3.13"
 dependencies = [
     "poetry",
     "pydantic",
@@ -22,18 +24,18 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
-    "pytest-cov",
-    "pre-commit"
+    "pre-commit", # pre-commit formatting hooks
+    "pytest",     # testing
+    "pytest-cov", # test coverage
+    "pylance",    # language server
+    "black",      # code formatting
+    "isort",      # import formatting
 ]
+
+# MARK: Poetry
 
 [project.scripts]
 trading-journal = "app.main:app"
-
-[project.urls]
-repository = "https://github.com/mohdfareed/trading-journal"
-
-# MARK: Poetry
 
 [tool.poetry]
 packages = [
@@ -46,6 +48,11 @@ build-backend = "poetry.core.masonry.api"
 
 # MARK: Tools
 
-[tool.mypy]
-strict = true
-enable_incomplete_feature = ["NewGenericSyntax"]
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+    "integration",
+]
+
+[tool.isort]
+profile = "black"
