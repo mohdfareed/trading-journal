@@ -4,10 +4,9 @@ __all__ = ["OANDAConfig"]
 
 from enum import Enum
 
-# import v20  # type: ignore[import-untyped]
 from pydantic import Field, field_validator
 
-from app import models
+from app import settings
 
 
 class OANDAEnvironment(str, Enum):
@@ -17,7 +16,7 @@ class OANDAEnvironment(str, Enum):
     LIVE = "live"
 
 
-class OANDAConfig(models.Config):
+class OANDAConfig(settings.BaseSettings):
     """OANDA configuration."""
 
     APP_NAME: str = Field(default="oanda", exclude=True)
@@ -32,15 +31,3 @@ class OANDAConfig(models.Config):
         if not value:
             raise ValueError("must not be empty")
         return value
-
-
-# def check_oanda_credentials(
-#     api_key: str, account_id: str, environment: OANDAEnvironment
-# ) -> bool:
-
-#     api = v20.account.Account(id=account_id, environment=environment.value)
-
-#     title: str = api.title()
-#     typer.echo(title)
-
-#     return True
