@@ -26,20 +26,21 @@ VENV_NAME = ".venv"
 def main() -> None:
     """Set up environment."""
 
-    print("Setting up development environment...")
     os.chdir(Path(__file__).parent.parent)  # .py -> scripts -> repository
     if not shutil.which("poetry"):  # validate poetry
         print("Error: Poetry is required to set up environment.", file=sys.stderr)
         sys.exit(1)
 
+    print("Setting up development environment...")
     if Path(VENV_NAME).exists():
         shutil.rmtree(VENV_NAME)
+    # run(f"poetry env use {shutil.which('python')}")
+    # run("poetry lock")
 
     print("Installing dependencies...")
-    run("poetry env use python3")
-    run("poetry lock")
     run("poetry install -E dev")
-    run("poetry run pre-commit install --install-hooks")
+    run(f"{Path.cwd()}/scripts/update.sh")
+    run(f"{Path.cwd()}/scripts/hooks.sh")
     print("Environment setup complete.")
 
 
