@@ -31,9 +31,10 @@ class AppHost(containers.DeclarativeContainer):
     app = providers.Dependency(instance_of=typer.Typer)
     debug_mode = providers.Dependency(instance_of=bool)
 
-    app_settings = providers.Resource(
-        settings.Settings(DEBUG=bool(debug_mode.provided)).resource
+    app_settings = providers.Singleton(
+        settings.Settings, DEBUG=bool(debug_mode.provided)
     )
+    settings_persistence = providers.Resource[None](app_settings.provided.resource)
 
     logger = providers.Singleton(
         logging.setup_logging,

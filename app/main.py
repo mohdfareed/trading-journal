@@ -51,7 +51,7 @@ def show_config(
     config: Annotated[
         settings.Settings,
         typer.Argument(hidden=True, expose_value=False, parser=lambda _: _),
-    ] = wiring.Provide[host.AppHost.app_settings]
+    ] = wiring.Provide[host.AppHost.app_settings].provider()
 ) -> None:
     """Show the application configuration."""
     rich.print(config.model_dump)
@@ -63,10 +63,9 @@ def clean(
     data_dir: Annotated[
         Path,
         typer.Argument(hidden=True, expose_value=False, parser=lambda _: _),
-    ] = wiring.Provide[host.AppHost.app_settings.provided.data_path]
+    ] = wiring.Provide[host.AppHost.app_settings.provided.data_path].provider()
 ) -> None:
     """Clean the application data directory."""
-
     shutil.rmtree(data_dir, ignore_errors=True)
     data_dir.mkdir(parents=True, exist_ok=True)
     rich.print(f"Cleaned data directory: {data_dir}")

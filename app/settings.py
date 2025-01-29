@@ -37,8 +37,8 @@ class BaseSettings(BaseSettings):
         model = self
         if filepath.exists():
             model = self.model_validate_json(filepath.read_text())
-
         yield model
+
         filepath.write_text(model.model_dump_json(indent=2))
 
 

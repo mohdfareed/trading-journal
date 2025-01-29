@@ -19,6 +19,9 @@ from rich.console import Console
 from rich.logging import RichHandler
 from rich.text import Text
 
+LOGGING_HEADER = f"[{time.asctime()}]"
+log_file_header = LOGGING_HEADER + "=" * (80 - 1 - len(LOGGING_HEADER))
+
 app_console = Console()
 """The application console."""
 err_console = Console(stderr=True)
@@ -39,16 +42,12 @@ def setup_file_logging(logger: Logger, log_dir: Path) -> None:
     """Add a file handler to the logger."""
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / f"{logger.name}.log"
-
     for handler in logger.handlers:
         if handler.name == str(log_file):
             return  # logger already has handler
 
     log_file.touch(exist_ok=True)
-    log_file.write_text(
-        f"[{time.asctime()}]" + "=" * (80 - len(f"[{time.asctime()}]"))
-    )  # clear log file
-
+    log_file.write_text(log_file_header)  # clear log file
     logger.addHandler(file_handler(log_file))
     logger.debug("Logging to file: %s", log_file)
 
