@@ -1,10 +1,10 @@
 """Application configuration."""
 
-__all__ = ["OANDAConfig"]
+__all__ = ["OANDASettings"]
 
 from enum import Enum
 
-from pydantic import Field, field_validator
+from pydantic import field_validator
 
 from app import settings
 
@@ -16,16 +16,15 @@ class OANDAEnvironment(str, Enum):
     LIVE = "live"
 
 
-class OANDAConfig(settings.BaseSettings):
+class OANDASettings(settings.Settings):
     """OANDA configuration."""
 
-    APP_NAME: str = Field(default="oanda", exclude=True)
     OANDA_API_KEY: str = ""
     OANDA_ACCOUNT_ID: str = ""
     OANDA_ENVIRONMENT: OANDAEnvironment = OANDAEnvironment.PRACTICE
 
-    @classmethod
     @field_validator("OANDA_API_KEY", "OANDA_ACCOUNT_ID")
+    @classmethod
     def validate_fields(cls, value: str) -> str:
         """Validate the OANDA API key and account ID."""
         if not value:

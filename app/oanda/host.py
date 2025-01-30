@@ -3,29 +3,39 @@
 __all__ = ["OANDAHost", "create_oanda_host"]
 
 
-from pathlib import Path
-
+import typer
 from dependency_injector import containers, providers
 
-from app import logging
+from app import host, logging, settings
 
-from .config import OANDAConfig
+from .settings import OANDASettings
 
 
-class OANDAHost(containers.DeclarativeContainer):
+class OANDAHost(host.Host):
     """OANDA application host."""
 
-    wiring_config = containers.WiringConfiguration(modules=["app.main"])
-    data_path = providers.Dependency(instance_of=Path)
-    log_dir = providers.Dependency(instance_of=Path)
+    wiring_config = containers.WiringConfiguration(modules=["app.oanda"])
+    app = providers.Dependency(instance_of=typer.Typer)
 
-    settings = providers.Resource(OANDAConfig().resource, data_path)
-    logger = logging.getLogger(__name__)
-    file_logging = providers.Resource[None](
-        logging.setup_file_logging, logger=logger, log_dir=log_dir
+    app_settings = providers.Dependency(instance_of=settings.AppSettings)
+    oanda_settings = providers.Singleton(OANDASettings)
+
+    logger = providers.Factory(
+        logging.setup_logging,
+        logger=logging.getLogger(__name__.replace("app.", "").split(".")[0]),
+        debug=app_settings.provided.DEBUG,
+        logging_path=app_settings.provided.logging_path,
     )
 
+    _log_file_header = providers.Resource(logging.stamp_file, logger=logger)
+    _settings_persistence = providers.Resource[None](
+        OANDASettings.resource, oanda_settings, app_settings.provided.data_path
+    )
+    _events = providers.Resource(host.AppLifecycle.resource, app)
 
-def create_oanda_host(data_path: Path, log_dir: Path) -> OANDAHost:
+
+def create_oanda_host(
+    app: typer.Typer, app_settings: settings.AppSettings
+) -> OANDAHost:
     """Create the OANDA application host."""
-    return OANDAHost(data_path=data_path, log_dir=log_dir)
+    return OANDAHost(app=app, app_settings=app_settings)
