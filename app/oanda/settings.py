@@ -3,12 +3,10 @@
 __all__ = ["oanda_settings"]
 
 from enum import Enum
-from pathlib import Path
 
 from pydantic import Field, field_validator
 
-from app.settings import app_settings
-from app.utils import settings
+from app.models import BaseSettings
 
 
 class OANDAEnvironment(str, Enum):
@@ -18,10 +16,8 @@ class OANDAEnvironment(str, Enum):
     LIVE = "live"
 
 
-class OANDASettings(settings.Settings):
+class OANDASettings(BaseSettings):
     """OANDA configuration."""
-
-    _data_path: Path | None = app_settings.data_path
 
     OANDA_API_KEY: str = ""
     OANDA_ACCOUNT_ID: str = ""

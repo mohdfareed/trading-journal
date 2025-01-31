@@ -30,7 +30,6 @@ class AppSettings(utils.Settings):
     @computed_field(repr=False)
     @property
     def data_path(self) -> Path:
-        """The application data directory."""
         file = (
             Path(typer.get_app_dir(APP_NAME))
             if self.ENVIRONMENT == Environment.PROD
