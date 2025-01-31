@@ -19,7 +19,7 @@ class Environment(str, Enum):
     DEV = "development"
 
 
-class AppSettings(utils.Settings):
+class AppSettings(utils.PersistedSettings):
     """Application configuration and settings."""
 
     ENVIRONMENT: Environment = Environment.PROD

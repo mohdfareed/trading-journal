@@ -1,6 +1,6 @@
 """Application configuration."""
 
-__all__ = ["Settings"]
+__all__ = ["PersistedSettings"]
 
 
 import atexit
@@ -16,8 +16,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from app.utils import helpers
 
 
-class Settings(BaseSettings, ABC):
-    """Base settings configuration."""
+class PersistedSettings(BaseSettings, ABC):
+    """Base settings with persistence."""
 
     model_config = SettingsConfigDict(
         env_file=dotenv.find_dotenv() or None,

@@ -1,9 +1,8 @@
 """Application utilities."""
 
-__all__ = ["SingletonMeta", "pascal_to_snake", "create_enum"]
+__all__ = ["SingletonMeta", "pascal_to_snake"]
 
 import re
-from enum import Enum
 from typing import Any
 
 from rich.console import Console
@@ -30,7 +29,3 @@ def pascal_to_snake(name: str) -> str:
     s1 = re.sub(r"([^_])([A-Z][a-z]+)", r"\1_\2", name)
     snake_case = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
     return snake_case
-
-
-def create_enum(elements: list[str], name: str | None = None) -> Enum:
-    return Enum(name or "", elements)

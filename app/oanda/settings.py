@@ -6,7 +6,7 @@ from enum import Enum
 
 from pydantic import Field, field_validator
 
-from app.models import BaseSettings
+from app.models import Settings
 
 
 class OANDAEnvironment(str, Enum):
@@ -16,7 +16,7 @@ class OANDAEnvironment(str, Enum):
     LIVE = "live"
 
 
-class OANDASettings(BaseSettings):
+class OANDASettings(Settings):
     """OANDA configuration."""
 
     OANDA_API_KEY: str = ""

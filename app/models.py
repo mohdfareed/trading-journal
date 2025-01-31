@@ -1,15 +1,18 @@
 """Application models."""
 
+__all__ = ["Lifecycle", "LifecycleEvent", "Settings"]
+
 from enum import Enum
 from pathlib import Path
 
+from blinker import signal
 from pydantic import computed_field
 
 from app import utils
 from app.settings import app_settings
 
 
-class AppLifecycle(str, Enum):
+class LifecycleEvent(str, Enum):
     """Application lifecycle event."""
 
     STARTUP = "app:start"
@@ -18,7 +21,19 @@ class AppLifecycle(str, Enum):
     """Application shutdown event."""
 
 
-class BaseSettings(utils.Settings):
+class Lifecycle:
+    """Application lifecycle signals."""
+
+    def __init__(self) -> None:
+        self.startup = signal(
+            LifecycleEvent.STARTUP, LifecycleEvent.STARTUP.__doc__
+        )
+        self.shutdown = signal(
+            LifecycleEvent.SHUTDOWN, LifecycleEvent.SHUTDOWN.__doc__
+        )
+
+
+class Settings(utils.PersistedSettings):
     """Base settings configuration."""
 
     @computed_field(repr=False)

@@ -11,18 +11,12 @@ from typing import Annotated
 import click
 import rich
 import typer
-from blinker import signal
 
 from app import models, oanda, utils
 from app.settings import app_settings
 
 logger = logging.getLogger(__name__.split(".")[0])
-startup = signal(
-    models.AppLifecycle.STARTUP, models.AppLifecycle.STARTUP.__doc__
-)
-shutdown = signal(
-    models.AppLifecycle.SHUTDOWN, models.AppLifecycle.SHUTDOWN.__doc__
-)
+lifecycle = models.Lifecycle()
 
 app = typer.Typer(
     name=app_settings.APP_NAME,
@@ -50,8 +44,8 @@ def main(
     logger.debug(f"Configuration:\n{app_settings.model_dump_json(indent=2)}")
     logger.debug(f"Executing: [italic]{' '.join(sys.argv)}[/]")
 
-    startup.send()
-    ctx.call_on_close(lambda: shutdown.send)
+    lifecycle.startup.send()
+    ctx.call_on_close(lambda: lifecycle.shutdown.send)
 
 
 @app.command()
