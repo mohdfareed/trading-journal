@@ -16,7 +16,6 @@ dependencies = [
     "poetry",
     "pydantic",
     "pydantic-settings",
-    "dependency-injector",
     "blinker",
     "typer",
     "v20"
@@ -53,6 +52,9 @@ testpaths = [
     "tests",
     "integration",
 ]
+
+[tool.black]
+line-length = 79
 
 [tool.isort]
 profile = "black"
