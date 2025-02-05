@@ -17,12 +17,8 @@ app = typer.Typer(
     context_settings={"help_option_names": ["-h", "--help"]},
     add_completion=False,
 )
-
+app_host.register(app)
 app.add_typer(oanda.app)
-app.command()(app_host.version)
-app.command()(app_host.clean)
-app.command()(app_host.logs)
-app.command()(app_settings.config)
 
 
 @app.callback()

@@ -41,6 +41,7 @@ class Services(dict[type, Any | Callable[[], Any]]):
         super().__setitem__(key, value)
 
 
+# TODO: create decorator that registers callable as app command for validation
 class Host(ABC):
     """Application host."""
 
@@ -69,8 +70,18 @@ class Host(ABC):
         self.logger.debug("Shutting down...")
         self.shutdown.send(self)
 
+    def validate(self) -> None:
+        """Validate the host status."""
+        if not self.is_started:
+            raise RuntimeError("Host is not started.")
+
+    def register(self, app: typer.Typer) -> None:
+        """Register commands to the application."""
+        app.command()(self.logs)
+
     def logs(self) -> None:
         """View the application logs."""
+        self.validate()
         logging.view_logs(
             settings.global_settings.logging_path / f"{self.logger.name}.log"
         )
