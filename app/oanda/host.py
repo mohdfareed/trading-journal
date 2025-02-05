@@ -39,7 +39,11 @@ class OANDAHost(core.Host):
     def summary(self) -> None:
         """Show the OANDA account summary."""
         self.validate()
-        rich.print(api.get_account())
+        account = api.get_account()
+        self.logger.debug(
+            f"Retrieved account: {account.model_dump_json(indent=2)}"
+        )
+        rich.print(account)
 
 
 oanda_host = OANDAHost(__name__.split(".")[-1])

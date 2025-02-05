@@ -61,13 +61,13 @@ class Host(ABC):
         self.logger = logging.create_logger(
             self.logger.name, settings.global_settings.logging_path
         )
-        self.logger.debug("Starting up...")
+        self.logger.debug(f"Starting up {self.logger.name}...")
         self.startup.send(self)
 
     def stop(self, *args: Any, **kwargs: Any) -> None:
         """Stop the application."""
         type(self).is_started = False
-        self.logger.debug("Shutting down...")
+        self.logger.debug(f"Shutting down {self.logger.name}...")
         self.shutdown.send(self)
 
     def validate(self) -> None:
