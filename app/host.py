@@ -6,8 +6,12 @@ __all__ = ["app_host"]
 import shutil
 
 import rich
+import rich.prompt
 
-from app import __name__, core, settings
+from app import core
+
+from . import __name__
+from .settings import app_settings
 
 app_host: "AppHost"
 """Application host."""
@@ -16,26 +20,30 @@ app_host: "AppHost"
 class AppHost(core.Host):
     def start(self, env: core.Environment | None, debug: bool = False) -> None:
         core.global_settings.APP_ENV = env or core.global_settings.APP_ENV
-        settings.app_settings.DEBUG_MODE = (
-            debug or settings.app_settings.DEBUG_MODE
-        )
-        core.setup_logging(settings.app_settings.DEBUG_MODE)
+        app_settings.DEBUG_MODE = debug or app_settings.DEBUG_MODE
+        core.setup_logging(app_settings.DEBUG_MODE)
         return super().start()
 
     def clean(self) -> None:
         """Clean the application data directory."""
-        for handler in core.logging.getLogger().handlers:
-            if isinstance(handler, core.logging.FileHandler):
-                handler.close()
-        shutil.rmtree(settings.app_settings.data_path, ignore_errors=True)
-        settings.app_settings.data_path.mkdir(parents=True, exist_ok=True)
         rich.print(
-            f"Cleaned data directory: {settings.app_settings.data_path}"
+            f"Cleaning data directory: {app_settings.data_path}",
         )
+        rich.print(
+            "[bold yellow]This will delete all data and configurations.[/]"
+        )
+        rich.prompt.Confirm.ask(
+            "Are you sure you want to continue?", default=True
+        )
+
+        core.close_files()
+        shutil.rmtree(app_settings.data_path, ignore_errors=True)
+        app_settings.data_path.mkdir(parents=True, exist_ok=True)
+        rich.print(f"Cleaned data directory: {app_settings.data_path}")
 
     def version(self) -> None:
         """Show the application version."""
-        rich.print(settings.app_settings.VERSION)
+        rich.print(app_settings.VERSION)
 
 
-app_host = AppHost()
+app_host = AppHost(__name__)

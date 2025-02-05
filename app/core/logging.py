@@ -1,6 +1,6 @@
 """Logging utilities."""
 
-__all__ = ["setup_logging", "create_logger", "view_logs"]
+__all__ = ["setup_logging", "create_logger", "view_logs", "close_files"]
 
 import re
 from datetime import datetime
@@ -58,6 +58,20 @@ def view_logs(
 
     rich.print(f"Log file: {log_file}")
     rich.print(log_contents.strip())
+
+
+def close_files() -> None:
+    """Close all file handlers."""
+    for logger in Logger.manager.loggerDict.values():
+        if not isinstance(logger, Logger):
+            continue
+
+        for handler in logger.handlers:
+            if not isinstance(handler, FileHandler):
+                continue
+
+            logger.removeHandler(handler)
+            handler.close()
 
 
 # MARK: Handlers
