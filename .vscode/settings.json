@@ -28,6 +28,7 @@
         "pyproject.toml",
     ],
     "cSpell.words": [
+        "customise",
         "dotenv",
         "oanda",
         "venv"

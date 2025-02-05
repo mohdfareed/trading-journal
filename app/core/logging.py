@@ -1,85 +1,66 @@
-"""Logging module."""
+"""Logging utilities."""
 
-__all__ = [
-    "app_console",
-    "err_console",
-    "setup_logging",
-    "enable_debugging",
-    "disable_debugging",
-    "enable_file_logging",
-    "disable_file_logging",
-    "stdout_handler",
-    "stderr_handler",
-    "debug_handler",
-    "file_handler",
-]
+__all__ = ["setup_logging", "create_logger", "view_logs"]
 
+import re
 from datetime import datetime
 from logging import *  # type: ignore
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
+import rich
+import typer
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.text import Text
 
 app_console = Console()
-"""The application console."""
 err_console = Console(stderr=True)
-"""The application error console."""
 
 
-def setup_logging() -> None:
-    """Set up logging."""
-    captureWarnings(True)
-    getLogger().setLevel(NOTSET)
-    getLogger().addHandler(stdout_handler())
-    getLogger().addHandler(stderr_handler())
+def setup_logging(debug: bool = False) -> None:
+    """Setup logging for the application."""
+    captureWarnings(True)  # capture warnings from the warnings module
+    logger = getLogger()
+    logger.setLevel(NOTSET)
+
+    logger.addHandler(stdout_handler())
+    logger.addHandler(stderr_handler())
+    logger.addHandler(debug_handler()) if debug else None
 
 
-def enable_debugging() -> None:
-    """Enable debugging mode."""
-    getLogger().addHandler(debug_handler())
-    getLogger().debug("Debugging enabled.")
-
-
-def disable_debugging() -> None:
-    """Disable debugging mode."""
-    for handler in getLogger().handlers[:]:
-        if handler.level == DEBUG:
-            getLogger().removeHandler(handler)
-            handler.close()
-    getLogger().debug("Debugging disabled.")
-
-
-def enable_file_logging(name: str) -> None:
-    """Add a new file logger."""
-    from app.settings import app_settings
-
-    file_path = app_settings.logging_path / f"{name}.log"
-    handler = file_handler(file_path)
+def create_logger(name: str, data_path: Path) -> Logger:
+    """Create a new file logger."""
     logger = getLogger(name)
+    logger.propagate = False
 
-    for handler in logger.handlers[:]:
-        if isinstance(handler, FileHandler):
-            logger.removeHandler(handler)
-            handler.close()
-
-    logger.addHandler(handler)
-    logger.debug(f"File logging enabled for {name}.")
+    logger.addHandler(file_handler(data_path / f"{name}.log"))
+    for handler in getLogger().handlers:
+        logger.addHandler(handler)
+    return logger
 
 
-def disable_file_logging(name: str) -> None:
-    """Remove file logger."""
-    logger = getLogger(name)
-    for handler in logger.handlers[:]:
-        if isinstance(handler, FileHandler):
-            logger.removeHandler(handler)
-            handler.close()
-    logger.debug(f"File logging disabled for {name}.")
+def view_logs(
+    log_file: Path,
+) -> None:
+    """View the contents of the log file."""
+    if not log_file.exists():
+        typer.echo(f"Log file not found: {log_file}")
+        raise typer.Exit(1)
+
+    log_contents = log_file.read_text()
+    pattern = r"^\[\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{3}\]=+$"
+    log_entries = re.split(pattern, log_contents, flags=re.MULTILINE)
+    if len(log_entries) < 3:  # ['', ..., 'last run (-2)', 'current run (-1)']
+        rich.print("[red]No log entries found.[/]")
+        raise typer.Exit(1)
+    log_contents = log_entries[-2]
+
+    rich.print(f"Log file: {log_file}")
+    rich.print(log_contents.strip())
 
 
-# region: Handlers
+# MARK: Handlers
 
 
 def stdout_handler() -> Handler:
@@ -135,6 +116,3 @@ def file_handler(log_file: Path) -> Handler:
         )
     )
     return file
-
-
-# endregion

@@ -18,9 +18,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+APP_ENV = "development"
+
 ENV = os.environ.copy()
 ENV["POETRY_VIRTUALENVS_IN_PROJECT"] = "true"
-VENV_NAME = ".venv"
 
 
 def main() -> None:
@@ -28,19 +29,26 @@ def main() -> None:
 
     os.chdir(Path(__file__).parent.parent)  # .py -> scripts -> repository
     if not shutil.which("poetry"):  # validate poetry
-        print("Error: Poetry is required to set up environment.", file=sys.stderr)
+        print(
+            "Error: Poetry is required to set up environment.", file=sys.stderr
+        )
         sys.exit(1)
 
     print("Setting up development environment...")
-    if Path(VENV_NAME).exists():
-        shutil.rmtree(VENV_NAME)
-    # run(f"poetry env use {shutil.which('python')}")
-    # run("poetry lock")
+    if Path(".venv").exists():
+        shutil.rmtree(".venv")
 
     print("Installing dependencies...")
     run("poetry install -E dev")
     run(f"{Path.cwd()}/scripts/update.sh")
     run(f"{Path.cwd()}/scripts/hooks.sh")
+
+    print("Creating environment...")
+    env_file = Path(".env")
+    if not env_file.exists():
+        env_file.touch()
+    if f"{APP_ENV=}" not in env_file.read_text():
+        env_file.write_text(f"{APP_ENV=}")
     print("Environment setup complete.")
 
 

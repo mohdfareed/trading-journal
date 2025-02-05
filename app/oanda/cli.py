@@ -1,42 +1,40 @@
 """OANDA application."""
 
-__all__ = ["app"]
+__all__ = ["app", "oanda_host"]
 
-
-import logging
 import time
 
-import rich
 import typer
 
-from app import utils
+from app import core
 
+from . import __name__
 from .settings import oanda_settings
 
-logger = logging.getLogger(oanda_settings.APP_NAME)
 app = typer.Typer(
     name=oanda_settings.APP_NAME,
     context_settings={"help_option_names": ["-h", "--help"]},
     add_completion=False,
 )
+oanda_host = core.Host(__name__)
+app.command()(oanda_settings.config)
+app.command()(oanda_host.logs)
 
 
 @app.callback()
-def main() -> None:
+def main(ctx: typer.Context) -> None:
     """The OANDA application."""
-    utils.enable_file_logging(logger.name)
+    oanda_host.start()
+    ctx.call_on_close(oanda_host.stop)
+
+    logger = oanda_host.logger
     logger.debug(f"Configuration:\n{oanda_settings.model_dump_json(indent=2)}")
-
-
-@app.command("config")
-def show_config() -> None:
-    """Show the application configuration."""
-    rich.print_json(oanda_settings.model_dump_json())
 
 
 @app.command()
 def start() -> None:
     """Start the application."""
+    logger = oanda_host.logger
     logger.info("Starting...")
     logger.warning("Press Ctrl+C to exit.")
 

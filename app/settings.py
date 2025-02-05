@@ -1,50 +1,46 @@
-"""Application configuration."""
+"""Application settings."""
 
 __all__ = ["app_settings"]
 
 
-from enum import Enum
 from pathlib import Path
 
-import typer
-from pydantic import Field, computed_field
+from pydantic import computed_field
 
-from app import APP_NAME, __version__, utils
+from app import __version__, core
+from app.core.settings import global_settings
 
-
-class Environment(str, Enum):
-    """Application deployment environment."""
-
-    PROD = "production"
-    DEV = "development"
+app_settings: "AppSettings"
+"""Application settings."""
 
 
-class AppSettings(utils.PersistedSettings):
-    """Application configuration and settings."""
+class AppSettings(core.Settings):
+    DEBUG_MODE: bool = False
 
-    ENVIRONMENT: Environment = Environment.PROD
+    @computed_field
+    @property
+    def APP_NAME(self) -> str:
+        return global_settings.APP_NAME
 
-    APP_NAME: str = Field(default=APP_NAME, exclude=True)
-    VERSION: str = Field(default=__version__, exclude=True)
+    @computed_field
+    @property
+    def APP_ENV(self) -> core.Environment:
+        return global_settings.APP_ENV
 
-    @computed_field(repr=False)
+    @computed_field
+    @property
+    def VERSION(self) -> str:
+        return __version__
+
+    @computed_field
     @property
     def data_path(self) -> Path:
-        file = (
-            Path(typer.get_app_dir(APP_NAME))
-            if self.ENVIRONMENT == Environment.PROD
-            else Path(__file__).parent.parent / "data"
-        )
-        file.mkdir(parents=True, exist_ok=True)
-        return file
+        return global_settings.data_path
 
-    @computed_field(repr=False)
+    @computed_field
     @property
     def logging_path(self) -> Path:
-        """The application logs directory."""
-        path = self.data_path / "logs"
-        path.mkdir(parents=True, exist_ok=True)
-        return path
+        return global_settings.logging_path
 
 
 app_settings = AppSettings()
