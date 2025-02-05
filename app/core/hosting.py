@@ -10,7 +10,7 @@ from typing import Any, Callable, ClassVar
 import typer
 from blinker import Signal, signal
 
-from . import logging, settings
+from . import __name__, logging, settings
 
 
 class LifecycleEvents(str, Enum):

@@ -16,7 +16,7 @@ app = typer.Typer(
     context_settings={"help_option_names": ["-h", "--help"]},
     add_completion=False,
 )
-oanda_host = core.Host(__name__)
+oanda_host = core.Host(__name__.split(".")[-1])
 app.command()(oanda_settings.config)
 app.command()(oanda_host.logs)
 
