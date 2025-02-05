@@ -51,10 +51,8 @@ class Host(ABC):
     logger: logging.Logger
     dependencies: Services = Services()
 
-    def __init__(self, name: str | None = None) -> None:
-        self.logger = logging.getLogger(
-            name or type(self).__module__.split(".")[-1]
-        )
+    def __init__(self, name: str) -> None:
+        self.logger = logging.getLogger(name)
 
     def start(self, *args: Any, **kwargs: Any) -> None:
         """Start the application."""
