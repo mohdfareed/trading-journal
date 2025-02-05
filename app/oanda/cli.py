@@ -14,6 +14,7 @@ app = typer.Typer(
     add_completion=False,
 )
 app.command()(oanda_host.run)
+app.command()(oanda_host.summary)
 app.command()(oanda_host.logs)
 app.command()(oanda_settings.config)
 

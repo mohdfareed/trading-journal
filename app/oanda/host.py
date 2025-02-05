@@ -4,18 +4,26 @@ __all__ = ["oanda_host"]
 
 import time
 
+import rich
 import typer
 
 from app import core
 
-from . import __name__
+from . import __name__, api
 
 oanda_host: "OANDAHost"
 
 
 class OANDAHost(core.Host):
+
+    def register(self, app: typer.Typer) -> None:
+        app.command()(self.run)
+        app.command()(self.summary)
+        super().register(app)
+
     def run(self) -> None:
         """Run the OANDA service."""
+        self.validate()
         self.logger.info("Starting...")
         self.logger.warning("Press Ctrl+C to exit.")
 
@@ -27,6 +35,11 @@ class OANDAHost(core.Host):
             print()
             self.logger.info("Exiting...")
             raise typer.Exit() from e
+
+    def summary(self) -> None:
+        """Show the OANDA account summary."""
+        self.validate()
+        rich.print(api.get_account())
 
 
 oanda_host = OANDAHost(__name__.split(".")[-1])

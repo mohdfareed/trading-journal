@@ -16,6 +16,8 @@ dependencies = [
     "poetry",
     "pydantic",
     "pydantic-settings",
+    "pydantic_extra_types",
+    "pycountry", # pydantic currency dependency
     "blinker",
     "typer",
     "v20"
@@ -52,6 +54,9 @@ testpaths = [
     "tests",
     "integration",
 ]
+
+[tool.pylance]
+
 
 [tool.black]
 line-length = 79
