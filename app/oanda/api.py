@@ -7,13 +7,6 @@ from . import models
 from .settings import oanda_settings
 
 
-def create_headers() -> dict[str, str]:
-    return {
-        "Authorization": f"Bearer {oanda_settings.API_KEY}",
-        "Content-Type": "application/json",
-    }
-
-
 def get_account() -> models.Account:
     """Retrieves the account information from OANDA."""
     url = f"{oanda_settings.base_url}/accounts/{oanda_settings.ACCOUNT_ID}"
