@@ -2,7 +2,6 @@
 
 __all__ = ["Host"]
 
-
 from abc import ABC
 from enum import Enum
 from typing import Any, Callable, ClassVar

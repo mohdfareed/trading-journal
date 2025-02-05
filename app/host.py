@@ -2,7 +2,6 @@
 
 __all__ = ["app_host"]
 
-
 import shutil
 
 import rich

@@ -2,7 +2,6 @@
 
 __all__ = ["global_settings", "Environment", "Settings"]
 
-
 import re
 from abc import ABC
 from enum import Enum

@@ -2,14 +2,13 @@
 
 __all__ = ["oanda_host"]
 
-import time
-
 import rich
 import typer
 
 from app import core
 
 from . import __name__, api
+from .settings import oanda_settings
 
 oanda_host: "OANDAHost"
 
@@ -17,27 +16,12 @@ oanda_host: "OANDAHost"
 class OANDAHost(core.Host):
 
     def register(self, app: typer.Typer) -> None:
-        app.command()(self.run)
-        app.command()(self.summary)
+        app.command()(self.account)
+        app.command()(oanda_settings.config)
         super().register(app)
 
-    def run(self) -> None:
-        """Run the OANDA service."""
-        self.validate()
-        self.logger.info("Starting...")
-        self.logger.warning("Press Ctrl+C to exit.")
-
-        try:  # Keep the application running
-            while True:
-                time.sleep(1)
-                self.logger.debug("Running...")
-        except KeyboardInterrupt as e:
-            print()
-            self.logger.info("Exiting...")
-            raise typer.Exit() from e
-
-    def summary(self) -> None:
-        """Show the OANDA account summary."""
+    def account(self) -> None:
+        """Show the OANDA account information."""
         self.validate()
         account = api.get_account()
         self.logger.debug(

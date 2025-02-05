@@ -2,7 +2,6 @@
 
 __all__ = ["app_settings"]
 
-
 from pathlib import Path
 
 from pydantic import computed_field

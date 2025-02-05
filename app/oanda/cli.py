@@ -2,7 +2,6 @@
 
 __all__ = ["app", "oanda_host"]
 
-
 import typer
 
 from .host import oanda_host
@@ -13,10 +12,7 @@ app = typer.Typer(
     context_settings={"help_option_names": ["-h", "--help"]},
     add_completion=False,
 )
-app.command()(oanda_host.run)
-app.command()(oanda_host.summary)
-app.command()(oanda_host.logs)
-app.command()(oanda_settings.config)
+oanda_host.register(app)
 
 
 @app.callback()
