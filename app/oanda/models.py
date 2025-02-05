@@ -1,12 +1,19 @@
 """OANDA API models."""
 
+from typing import ClassVar
+
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_extra_types.currency_code import Currency
+
+from .settings import oanda_settings
 
 
 class Account(BaseModel):
 
-    model_config = ConfigDict(extra="allow")
+    model_config = ConfigDict(extra="ignore")
+    path: ClassVar[str] = (
+        f"{oanda_settings.base_url}/accounts/{oanda_settings.ACCOUNT_ID}"
+    )
 
     id: str = Field()
     name: str = Field(alias="alias")

@@ -12,15 +12,15 @@ urls = { repository = "https://github.com/mohdfareed/trading-journal" }
 # MARK: Dependencies
 
 requires-python = ">=3.13"
+
 dependencies = [
     "poetry",
+    "typer",
+    "blinker",
     "pydantic",
     "pydantic-settings",
     "pydantic_extra_types",
     "pycountry", # pydantic currency dependency
-    "blinker",
-    "typer",
-    "v20"
 ]
 
 [project.optional-dependencies]
@@ -54,9 +54,6 @@ testpaths = [
     "tests",
     "integration",
 ]
-
-[tool.pylance]
-
 
 [tool.black]
 line-length = 79
