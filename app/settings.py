@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pydantic import computed_field
 
-from app import __version__, core
+from app import core
 from app.core.settings import global_settings
 
 app_settings: "AppSettings"
@@ -30,7 +30,7 @@ class AppSettings(core.Settings):
     @computed_field
     @property
     def VERSION(self) -> str:
-        return __version__
+        return global_settings.VERSION
 
     @computed_field
     @property

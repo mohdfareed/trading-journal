@@ -7,13 +7,13 @@ from typing import Annotated
 
 import typer
 
-from app import __name__, core, oanda
-from app.core.settings import global_settings
-from app.host import app_host
-from app.settings import app_settings
+from app import core, oanda
+
+from .host import app_host
+from .settings import app_settings
 
 app = typer.Typer(
-    name=global_settings.APP_NAME,
+    name=core.global_settings.APP_NAME,
     context_settings={"help_option_names": ["-h", "--help"]},
     add_completion=False,
 )
@@ -31,7 +31,7 @@ def main(
     env: Annotated[
         core.Environment,
         typer.Option("--env", help="The application deployment environment."),
-    ] = global_settings.APP_ENV,
+    ] = core.global_settings.APP_ENV,
     debug_mode: Annotated[
         bool,
         typer.Option(

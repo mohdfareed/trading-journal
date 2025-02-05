@@ -35,6 +35,7 @@ class Environment(str, Enum):
 class GlobalSettings(BaseSettings):
     APP_ENV: Environment = Environment.PROD
     APP_NAME: ClassVar[str] = APP_NAME
+    VERSION: ClassVar[str] = __version__
     DEV_DATA_PATH: ClassVar[Path] = (
         Path(__file__).parent.parent.parent / "data"
     )
