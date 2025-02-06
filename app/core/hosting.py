@@ -41,6 +41,7 @@ class Services(dict[type, Any | Callable[[], Any]]):
 
 
 # TODO: create decorator that registers callable as app command for validation
+# TODO: use generics to specify settings type, if any
 class Host(ABC):
     """Application host."""
 
@@ -49,6 +50,7 @@ class Host(ABC):
     shutdown: ClassVar[Signal] = signal(LifecycleEvents.SHUTDOWN)
 
     logger: logging.Logger
+    app_settings: settings.Settings | None = None
     dependencies: Services = Services()
 
     def __init__(self, name: str) -> None:
@@ -60,8 +62,15 @@ class Host(ABC):
         self.logger = logging.create_logger(
             self.logger.name, settings.global_settings.logging_path
         )
+
         self.logger.debug(f"Starting up {self.logger.name}...")
         self.startup.send(self)
+
+        if not self.app_settings:
+            return
+        self.logger.debug(
+            f"Configuration:\n{self.app_settings.model_dump_json(indent=2)}"
+        )
 
     def stop(self, *args: Any, **kwargs: Any) -> None:
         """Stop the application."""

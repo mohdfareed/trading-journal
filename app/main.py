@@ -7,7 +7,7 @@ from typing import Annotated
 
 import typer
 
-from app import core, oanda
+from app import core, journal
 
 from .host import app_host
 from .settings import app_settings
@@ -18,7 +18,7 @@ app = typer.Typer(
     add_completion=False,
 )
 app_host.register(app)
-app.add_typer(oanda.app)
+app.add_typer(journal.app)
 
 
 @app.callback()
@@ -39,8 +39,6 @@ def main(
     app_host.start(env, debug_mode)
     ctx.call_on_close(app_host.stop)
 
-    command = " ".join(sys.argv[1:])
     logger = app_host.logger
-
-    logger.debug(f"Configuration:\n{app_settings.model_dump_json(indent=2)}")
+    command = " ".join(sys.argv[1:])
     logger.debug(f"Executing: [purple]{app_settings.APP_NAME} {command}[/]")

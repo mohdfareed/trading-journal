@@ -18,6 +18,7 @@ app_host: "AppHost"
 
 
 class AppHost(core.Host):
+    app_settings = app_settings
 
     def start(self, env: core.Environment | None, debug: bool = False) -> None:
         core.global_settings.APP_ENV = env or core.global_settings.APP_ENV

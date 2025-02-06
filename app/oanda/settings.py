@@ -9,6 +9,8 @@ from pydantic_settings import SettingsConfigDict
 
 from app import core
 
+oanda_settings: "OANDASettings"
+
 
 class OANDAEnvironment(str, Enum):
     """OANDA environment."""
