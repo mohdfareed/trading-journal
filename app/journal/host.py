@@ -4,7 +4,6 @@ __all__ = ["journal_host"]
 
 import rich
 import typer
-from pydantic import BaseModel
 
 from app import core
 
@@ -26,7 +25,6 @@ class JournalHost(core.Host):
     def register(self, app: typer.Typer) -> None:
         app.command()(self.account)
         app.command()(self.trades)
-        app.command()(self.orders)
         app.command()(journal_settings.config)
         super().register(app)
 
@@ -34,10 +32,8 @@ class JournalHost(core.Host):
         """Show the OANDA account information."""
         self.validate()
         account = self.broker.get_account()
-
-        model = BaseModel.model_validate(account)
         self.logger.debug(
-            f"Retrieved account: {model.model_dump_json(indent=2)}"
+            f"Retrieved account: {account.model_dump_json(indent=2)}"
         )
         rich.print(account)
 
@@ -45,23 +41,10 @@ class JournalHost(core.Host):
         """Show the account trades."""
         self.validate()
         trades = self.broker.get_trades()
-
-        model = BaseModel.model_validate(trades)
         self.logger.debug(
-            f"Retrieved trades: {model.model_dump_json(indent=2)}"
+            f"Retrieved trades: {trades.model_dump_json(indent=2)}"
         )
         rich.print(trades)
-
-    def orders(self) -> None:
-        """Show the account orders."""
-        self.validate()
-        orders = self.broker.get_orders()
-
-        model = BaseModel.model_validate(orders)
-        self.logger.debug(
-            f"Retrieved orders: {model.model_dump_json(indent=2)}"
-        )
-        rich.print(orders)
 
 
 journal_host = JournalHost(__name__.split(".")[-1])

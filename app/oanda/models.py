@@ -1,14 +1,14 @@
 """OANDA API models."""
 
+__all__ = ["Account", "Trade", "Trades", "Order", "Orders"]
+
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_extra_types.currency_code import Currency
-
-from app import journal
 
 from .settings import oanda_settings
 
 
-class Account(BaseModel, journal.Account):
+class Account(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     id: str = Field()
@@ -39,8 +39,8 @@ class Account(BaseModel, journal.Account):
         )
 
 
-class Trade(BaseModel, journal.Trade):
-    model_config = ConfigDict(extra="allow")
+class Trade(BaseModel):
+    model_config = ConfigDict(extra="ignore")
     id: str = Field()
 
     @classmethod
@@ -57,7 +57,7 @@ class Trades(BaseModel):
         return f"{Account.path()}/trades"
 
 
-class Order(BaseModel, journal.Trade):
+class Order(BaseModel):
     model_config = ConfigDict(extra="allow")
     id: str = Field()
 

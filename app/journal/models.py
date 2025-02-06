@@ -1,10 +1,27 @@
 """Trading journal models."""
 
+__all__ = [
+    "Broker",
+    "TradeDirection",
+    "Indicators",
+    "TradeEntry",
+    "TradeExit",
+    "Trade",
+    "Trades",
+    "Account",
+]
+
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Protocol, Sequence
+from typing import Any, Protocol
 
 from pydantic_extra_types.currency_code import Currency
+
+
+class BaseModel(Protocol):
+    @classmethod
+    def model_validate(cls, *args: Any, **kwargs: Any) -> "BaseModel": ...
+    def model_dump_json(self, *args: Any, **kwargs: Any) -> str: ...
 
 
 class Broker(Protocol):
@@ -14,12 +31,8 @@ class Broker(Protocol):
         """Returns the account information."""
         ...
 
-    def get_trades(self) -> Sequence["Trade"]:
+    def get_trades(self) -> "Trades":
         """Returns the account trades."""
-        ...
-
-    def get_orders(self) -> Sequence["Trade"]:
-        """Returns the account orders (non-filled trades)."""
         ...
 
 
@@ -28,14 +41,14 @@ class TradeDirection(Enum):
     SHORT = "short"
 
 
-class Indicators(Protocol):
+class Indicators(BaseModel):
     ema: float
     stochastic: float
     rsi: float
     macd: float
 
 
-class TradeEntry(Protocol):
+class TradeEntry(BaseModel):
     trade_id: str
     symbol: str
     entry_timestamp: datetime
@@ -49,19 +62,23 @@ class TradeEntry(Protocol):
     is_filled: bool = False  # for limit/stop orders
 
 
-class TradeExit(Protocol):
+class TradeExit(BaseModel):
     trade_id: str
     exit_timestamp: datetime
     exit_price: float
     fees: float = 0.0
 
 
-class Trade(Protocol):
+class Trade(BaseModel):
     entry: TradeEntry
     exit: TradeExit | None = None
 
 
-class Account(Protocol):
+class Trades(BaseModel):
+    trades: list[Trade]
+
+
+class Account(BaseModel):
     id: str
 
     currency: Currency
